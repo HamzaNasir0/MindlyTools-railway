@@ -12,7 +12,7 @@ const app = express();
 app.use(
   cors({
     // CRITICAL: Uses environment variable for dynamic origin
-    origin: process.env.CLIENT_URL || "http://localhost:5173", 
+    origin: process.env.CLIENT_URL,
     credentials: true, // REQUIRED to allow cookies to be sent/received
     
   })
