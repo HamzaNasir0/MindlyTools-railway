@@ -14,6 +14,7 @@ app.use(
     // CRITICAL: Uses environment variable for dynamic origin
     origin: process.env.CLIENT_URL || "http://localhost:5173", 
     credentials: true, // REQUIRED to allow cookies to be sent/received
+    
   })
 );
 app.use(express.json());

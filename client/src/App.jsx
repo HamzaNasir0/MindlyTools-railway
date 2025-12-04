@@ -6,6 +6,7 @@ import { auth } from "./firebase";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import ChooseUsername from "./pages/ChooseUsername";
+import HabitStats from "./pages/HabitStats";
 
 // Get backend URL from environment variables
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
