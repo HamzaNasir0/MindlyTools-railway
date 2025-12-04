@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import cookieParser from "cookie-parser";
+import cookieParser from "cookie-parser"; // Don't forget to run 'npm install cookie-parser'
 
 dotenv.config();
 
@@ -17,7 +17,7 @@ app.use(
   })
 );
 app.use(express.json());
-app.use(cookieParser()); MIDDLEWARE
+app.use(cookieParser()); // Corrected line: no trailing non-comment text
 
 app.get("/", (req, res) => {
   res.send("MindlyTools API is running...");
