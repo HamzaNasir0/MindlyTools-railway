@@ -1,72 +1,92 @@
-import { useState } from "react";
-import { auth } from "../firebase";
+import { useEffect, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import { auth } from "./firebase";
+import Login from "./pages/Login";
+import Home from "./pages/Home";
+import ChooseUsername from "./pages/ChooseUsername";
+import HabitStats from "./pages/HabitStats";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
-export default function ChooseUsername({ onComplete }) {
-  const [username, setUsername] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+function App() {
+  const [firebaseUser, setFirebaseUser] = useState(null);
+  const [backendUser, setBackendUser] = useState(null);
+  const [needsUsername, setNeedsUsername] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const saveUsername = async () => {
-    setError("");
-    setLoading(true);
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setFirebaseUser(user);
 
-    if (!username.trim()) {
-      setError("Username cannot be empty");
-      setLoading(false);
-      return;
-    }
-
-    try {
-      // NOTE: We still get the ID token here as the session cookie may not be
-      // verified/established yet after the initial /google call
-      const token = await auth.currentUser.getIdToken();
-
-      const res = await fetch(`${BACKEND_URL}/api/auth/set-username`, {
-        // 👈 UPDATED URL
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        credentials: "include", // 👈 Send the cookie
-        body: JSON.stringify({ username }),
-      });
-
-      const data = await res.json();
-
-      if (data.error) {
-        setError(data.error);
-      } else {
-        onComplete();
+      // User logged out
+      if (!user) {
+        setBackendUser(null);
+        setNeedsUsername(false);
+        setLoading(false);
+        return;
       }
-    } catch (err) {
-      setError("Something went wrong, try again");
-    }
 
-    setLoading(false);
-  };
+      try {
+        const token = await user.getIdToken();
+
+        const res = await fetch(`${BACKEND_URL}/api/auth/google`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        });
+
+        // If server returns HTML or error, prevent JSON crash
+        const text = await res.text();
+        let data;
+
+        try {
+          data = JSON.parse(text);
+        } catch {
+          console.error("Server did not return JSON:", text);
+          setLoading(false);
+          return;
+        }
+
+        if (data.needsUsername) {
+          setNeedsUsername(true);
+        } else {
+          setBackendUser(data.user);
+          setNeedsUsername(false);
+        }
+      } catch (err) {
+        console.error("AUTH ERROR:", err);
+      }
+
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  if (loading) return <div style={{ color: "white" }}>Loading...</div>;
+
+  if (!firebaseUser) return <Login />;
+
+  if (needsUsername) {
+    return <ChooseUsername onComplete={() => window.location.reload()} />;
+  }
 
   return (
-    <div className="choose-username-container">
-      <div className="choose-username-box">
-        <h2>Create a Username</h2>
-        <p>Choose a unique username to complete your account</p>
-
-        <input
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value.trim())}
-          placeholder="Enter username"
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home user={backendUser} />} />
+        <Route
+          path="/stats/:id/:range"
+          element={<HabitStats user={backendUser} />}
         />
-
-        {error && <div className="error">{error}</div>}
-
-        <button onClick={saveUsername} disabled={loading}>
-          {loading ? "Saving..." : "Save and Continue"}
-        </button>
-      </div>
-    </div>
+      </Routes>
+    </BrowserRouter>
   );
 }
+
+export default App;
