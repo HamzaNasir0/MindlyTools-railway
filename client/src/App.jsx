@@ -8,7 +8,7 @@ import Home from "./pages/Home";
 import ChooseUsername from "./pages/ChooseUsername";
 import HabitStats from "./pages/HabitStats";
 
-// Get backend URL from environment variables
+// CORRECT backend URL from Vite environment variables
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 function App() {
@@ -21,6 +21,7 @@ function App() {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setFirebaseUser(user);
 
+      // User logged out
       if (!user) {
         setBackendUser(null);
         setNeedsUsername(false);
@@ -28,24 +29,38 @@ function App() {
         return;
       }
 
-      const token = await user.getIdToken();
+      try {
+        const token = await user.getIdToken();
 
-      const res = await fetch(`${BACKEND_URL}/api/auth/google`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
+        const res = await fetch(`${BACKEND_URL}/api/auth/google`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        });
 
-      const data = await res.json();
+        // Prevent crash if response is not JSON
+        const raw = await res.text();
+        let data;
 
-      if (data.needsUsername) {
-        setNeedsUsername(true);
-      } else {
-        setBackendUser(data.user);
-        setNeedsUsername(false);
+        try {
+          data = JSON.parse(raw);
+        } catch (err) {
+          console.error("❌ Backend did not return JSON:", raw);
+          setLoading(false);
+          return;
+        }
+
+        if (data.needsUsername) {
+          setNeedsUsername(true);
+        } else {
+          setBackendUser(data.user);
+          setNeedsUsername(false);
+        }
+      } catch (err) {
+        console.error("❌ AUTH ERROR:", err);
       }
 
       setLoading(false);
@@ -69,7 +84,6 @@ function App() {
           path="/stats/:id/:range"
           element={<HabitStats user={backendUser} />}
         />
-        {/* Add other routes here */}
       </Routes>
     </BrowserRouter>
   );
