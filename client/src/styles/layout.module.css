@@ -1,0 +1,8 @@
+.layoutContainer {
+  display: flex;
+  min-height: calc(100vh - 120px); /* Adjust based on header/footer height */
+}
+
+.mainContent {
+  flex: 1;
+}

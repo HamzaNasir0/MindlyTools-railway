@@ -1,0 +1,178 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 90px; 
+  right: -300px;
+  width: 280px;
+  height: calc(100vh - 90px);
+  z-index: 999;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-top: 20px;
+  box-shadow: -4px 0 20px #0c2b4e4d;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: linear-gradient(180deg, #0C2B4E 0%, #1A3D64 50%, #1D546C 100%);
+}
+
+.sidebar.open {
+  right: 0; 
+  box-shadow: -8px 0 30px #0c2b4e66;
+}
+
+.sidebar.collapsed {
+  right: -300px;
+}
+
+/* Profile Section */
+.sidebarProfile {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #f4f4f41a;
+  box-shadow: 0 4px 20px #0000004d;
+  margin: 0 auto 20px;
+  transition: all 0.3s ease;
+  background: #F4F4F4;
+  cursor: pointer;
+}
+
+.sidebarProfile:hover {
+  border-color: #f4f4f44d;
+  transform: scale(1.1);
+}
+
+/* Username */
+.sidebarUsername {
+  color: #F4F4F4;
+  font-size: 1.4rem;
+  font-weight: 600;
+  text-align: center;
+  margin: 0 0 8px 0;
+  padding: 0 20px;
+  text-shadow: 0 2px 4px #0000004d;
+  letter-spacing: 0.5px;
+}
+
+/* Timezone */
+.sidebarTimezone {
+  color: #f4f4f4cc;
+  font-size: 0.9rem;
+  text-align: center;
+  margin: 0 0 30px 0;
+  padding: 0 20px;
+  font-weight: 400;
+}
+
+/* Main Buttons */
+.sidebarBtn {
+  color: #F4F4F4;
+  border: 2px solid #f4f4f433;
+  border-radius: 12px;
+  padding: 14px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 20px 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px #00000033;
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, #1D546C 0%, #1A3D64 100%);
+}
+
+.sidebarBtn:hover {
+  border-color: #f4f4f466;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px #0000004d;
+  background: linear-gradient(135deg, #1A3D64 0%, #0C2B4E 100%);
+}
+
+.sidebarBtn:active {
+  transform: translateY(0);
+}
+
+/* Spacer */
+.sidebarSpacer {
+  flex: 1;
+  min-height: 20px;
+}
+
+/* Logout Button */
+.sidebarLogoutBtn {
+  background: #f4f4f41a;
+  color: #F4F4F4;
+  border: 2px solid #f4f4f433;
+  border-radius: 12px;
+  padding: 14px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.sidebarLogoutBtn:hover {
+  background: #f4f4f426;
+  border-color: #f4f4f466;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px #00000033;
+}
+
+/* Scrollbar Styling */
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: #f4f4f41a;
+  border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: #f4f4f44d;
+  border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: #f4f4f480;
+}
+
+/* Responsive Style */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 260px;
+    right: -260px;
+    top: 80px;
+    height: calc(100vh - 80px);
+  }
+  
+  .sidebar.open {
+    right: 0;
+  }
+}
+
+/* Backdrop for when sidebar is open */
+.sidebarBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #00000080;
+  backdrop-filter: blur(4px);
+  z-index: 998;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.sidebarBackdrop.active {
+  opacity: 1;
+  visibility: visible;
+}

@@ -1,0 +1,138 @@
+import express from "express";
+import admin from "../config/firebase.js";
+import { verifyToken } from "../middleware/auth.js"; // Kept for other routes
+
+const router = express.Router();
+const db = admin.database();
+
+// Use __session as the cookie name, recommended for Firebase-adjacent deployments
+const SESSION_COOKIE_NAME = "__session"; 
+
+/**
+ * POST /api/auth/google
+ * Verifies Firebase token, stores/loads user profile, and SETS SESSION COOKIE.
+ */
+router.post("/google", async (req, res) => {
+  try {
+    const header = req.headers.authorization;
+    if (!header) {
+      return res.status(401).json({ error: "Missing ID token for session creation" });
+    }
+
+    const idToken = header.split(" ")[1];
+    
+    // 1. Verify the ID Token from the client
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    const uid = decodedToken.uid;
+    const userRef = db.ref(`users/${uid}`);
+    const snapshot = await userRef.once("value");
+    let user = snapshot.val();
+
+    // 2. User Setup (Existing Logic)
+    if (!user) {
+      const newUser = {
+        email: decodedToken.email,
+        name: decodedToken.name || decodedToken.displayName || null,
+        picture: decodedToken.picture || decodedToken.photoURL || null,
+        username: null,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      };
+      await userRef.set(newUser);
+      user = newUser;
+    }
+
+    // 3. CREATE AND SET SESSION COOKIE 🍪
+    const FIVE_DAYS = 60 * 60 * 24 * 5 * 1000; // 5 days (adjust as needed, max is 2 weeks)
+    
+    const sessionCookie = await admin.auth().createSessionCookie(idToken, { expiresIn: FIVE_DAYS });
+
+    const cookieOptions = { 
+      maxAge: FIVE_DAYS, 
+      httpOnly: true, // Prevents client-side script access (XSS prevention)
+      secure: process.env.NODE_ENV === 'production', // Use secure:true on HTTPS (Railway)
+      sameSite: 'Lax', // Recommended for modern browsers
+    };
+
+    res.cookie(SESSION_COOKIE_NAME, sessionCookie, cookieOptions);
+    
+    // 4. RETURN RESPONSE
+    if (!user.username) {
+      return res.json({ needsUsername: true });
+    }
+    
+    return res.json({
+      success: true,
+      user: { uid, ...user }
+    });
+
+  } catch (err) {
+    console.error("AUTH/GOOGLE ERROR:", err);
+    // Clear cookie on auth failure to ensure a clean state
+    res.clearCookie(SESSION_COOKIE_NAME); 
+    res.status(401).json({ error: "Auth failed or token expired/invalid" });
+  }
+});
+
+
+
+/**
+ * POST /api/auth/set-username
+ * Saves username securely (This route still uses the verifyToken middleware indirectly
+ * or relies on the client to send a new ID Token if the cookie hasn't been set yet.
+ * The token verification logic is handled in the middleware now).
+ */
+router.post("/set-username", verifyToken, async (req, res) => {
+  try {
+    const uid = req.uid; // Retrieved from the verifyToken middleware (cookie or header)
+    const { username } = req.body;
+    
+    if (!username) return res.status(400).json({ error: "Missing username" });
+
+    // Check uniqueness via lookup
+    const existing = await db.ref(`usernames/${username}`).once("value");
+    if (existing.exists()) {
+      return res.status(400).json({ error: "Username already taken" });
+    }
+
+    // Save user’s username
+    await db.ref(`users/${uid}/username`).set(username);
+
+    // Save reverse lookup
+    await db.ref(`usernames/${username}`).set(uid);
+
+    res.json({ success: true, username });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to set username" });
+  }
+});
+
+
+
+/**
+ * POST /api/auth/signout
+ * Clears the session cookie and revokes the session on Firebase.
+ */
+router.post("/signout", async (req, res) => {
+    const sessionCookie = req.cookies[SESSION_COOKIE_NAME];
+    
+    // 1. Clear cookie locally
+    res.clearCookie(SESSION_COOKIE_NAME);
+
+    // 2. Revoke session on the Firebase server for security
+    if (sessionCookie) {
+        try {
+            const decodedClaims = await admin.auth().verifySessionCookie(sessionCookie);
+            // Revoke all refresh tokens for the user identified by 'sub' (uid)
+            await admin.auth().revokeRefreshTokens(decodedClaims.sub); 
+        } catch (error) {
+            // Log a warning but don't fail the signout if the session is already invalid
+            console.warn("Could not revoke Firebase session tokens (already expired/invalid):", error.message);
+        }
+    }
+
+    res.json({ success: true, message: "Signed out successfully" });
+});
+
+
+export default router;

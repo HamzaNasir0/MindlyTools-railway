@@ -1,0 +1,55 @@
+.toolCard {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px #0000001a;
+  padding: 24px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.toolCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 16px #00000026;
+}
+
+.toolCardContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.toolIcon {
+  font-size: 88px;
+  margin-bottom: 16px;
+}
+
+.toolTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 12px 0;
+}
+
+.toolDescription {
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0 0 24px 0;
+  flex-grow: 1;
+}
+
+.toolButton {
+  background: linear-gradient(135deg, #3e5b7d 0%, #121f35 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.toolButton:hover {
+  opacity: 0.9;
+}
