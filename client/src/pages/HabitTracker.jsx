@@ -4,7 +4,7 @@ import styles from "../styles/habits.module.css";
 // Assuming you have a Sidebar component
 import Sidebar from "../components/Sidebar";
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function HabitTracker({ user }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);

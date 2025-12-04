@@ -3,7 +3,7 @@ import Sidebar from "../components/Sidebar";
 import { auth } from "../firebase";
 import { useParams } from "react-router-dom";
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function HabitStats({ user }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);

@@ -9,7 +9,7 @@ import ChooseUsername from "./pages/ChooseUsername";
 import HabitStats from "./pages/HabitStats";
 
 // Get backend URL from environment variables
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 function App() {
   const [firebaseUser, setFirebaseUser] = useState(null);

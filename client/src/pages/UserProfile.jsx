@@ -4,7 +4,7 @@ import { auth } from "../firebase";
 import styles from "../styles/userprofile.module.css";
 import { useRef } from "react";
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function UserProfile({ user }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
