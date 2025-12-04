@@ -4,6 +4,8 @@ import { auth } from "../firebase";
 import styles from "../styles/userprofile.module.css";
 import { useRef } from "react";
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+
 export default function UserProfile({ user }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [username, setUsername] = useState(user?.username || "");
@@ -18,12 +20,13 @@ export default function UserProfile({ user }) {
   const handleUsernameUpdate = async () => {
     const token = await auth.currentUser.getIdToken();
 
-    const res = await fetch("http://localhost:5000/api/user/update-username", {
+    const res = await fetch(`${BACKEND_URL}/api/user/update-username`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify({ username }),
     });
 
@@ -47,11 +50,13 @@ export default function UserProfile({ user }) {
 
     const token = await auth.currentUser.getIdToken();
 
-    const res = await fetch("http://localhost:5000/api/user/update-picture", {
+    const res = await fetch(`${BACKEND_URL}/api/user/update-picture`, {
+      // 👈 UPDATED URL
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
       },
+      credentials: "include",
       body: formData,
     });
 
@@ -66,17 +71,15 @@ export default function UserProfile({ user }) {
 
   return (
     <>
-      <div className={styles.profileBackgroung}>
-        <div className={styles.profileGridOverlay}></div>
+      <div style={{ display: "flex", height: "100vh" }}>
         <Sidebar
           user={user}
           sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
         />
+
         <div className={styles.userprofileContainer}>
           <div className={styles.userprofileContent}>
-            {/* <h1>User Profile</h1> */}
-
             {/* Profile Picture */}
             <div className={styles.userprofilePictureSection}>
               <img
@@ -101,7 +104,6 @@ export default function UserProfile({ user }) {
 
             {/* Username */}
             <div className={styles.userprofileField}>
-              {/* <label>Username</label> */}
               <input
                 type="text"
                 value={username}

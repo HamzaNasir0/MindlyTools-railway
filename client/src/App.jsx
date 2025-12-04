@@ -7,6 +7,9 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 import ChooseUsername from "./pages/ChooseUsername";
 
+// Get backend URL from environment variables
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+
 function App() {
   const [firebaseUser, setFirebaseUser] = useState(null);
   const [backendUser, setBackendUser] = useState(null);
@@ -26,12 +29,13 @@ function App() {
 
       const token = await user.getIdToken();
 
-      const res = await fetch("http://localhost:5000/api/auth/google", {
+      const res = await fetch(`${BACKEND_URL}/api/auth/google`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
+        credentials: "include",
       });
 
       const data = await res.json();
@@ -60,6 +64,11 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home user={backendUser} />} />
+        <Route
+          path="/stats/:id/:range"
+          element={<HabitStats user={backendUser} />}
+        />
+        {/* Add other routes here */}
       </Routes>
     </BrowserRouter>
   );

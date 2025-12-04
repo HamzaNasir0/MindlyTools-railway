@@ -1,11 +1,10 @@
 import express from "express";
 import admin from "../config/firebase.js";
-import { verifyToken } from "../middleware/auth.js"; // Kept for other routes
+import { verifyToken } from "../middleware/auth.js";
 
 const router = express.Router();
 const db = admin.database();
 
-// Use __session as the cookie name, recommended for Firebase-adjacent deployments
 const SESSION_COOKIE_NAME = "__session"; 
 
 /**
@@ -41,16 +40,16 @@ router.post("/google", async (req, res) => {
       user = newUser;
     }
 
-    // 3. CREATE AND SET SESSION COOKIE 🍪
-    const FIVE_DAYS = 60 * 60 * 24 * 5 * 1000; // 5 days (adjust as needed, max is 2 weeks)
-    
+    // 5 days expiration (adjust as needed, max is 2 weeks)
+    const FIVE_DAYS = 60 * 60 * 24 * 5 * 1000; 
     const sessionCookie = await admin.auth().createSessionCookie(idToken, { expiresIn: FIVE_DAYS });
 
     const cookieOptions = { 
       maxAge: FIVE_DAYS, 
       httpOnly: true, // Prevents client-side script access (XSS prevention)
-      secure: process.env.NODE_ENV === 'production', // Use secure:true on HTTPS (Railway)
-      sameSite: 'Lax', // Recommended for modern browsers
+      // Use secure:true only on HTTPS (i.e., production/Railway)
+      secure: process.env.NODE_ENV === 'production', 
+      sameSite: 'Lax', 
     };
 
     res.cookie(SESSION_COOKIE_NAME, sessionCookie, cookieOptions);
@@ -74,16 +73,13 @@ router.post("/google", async (req, res) => {
 });
 
 
-
 /**
  * POST /api/auth/set-username
- * Saves username securely (This route still uses the verifyToken middleware indirectly
- * or relies on the client to send a new ID Token if the cookie hasn't been set yet.
- * The token verification logic is handled in the middleware now).
+ * Saves username securely (Uses updated verifyToken middleware)
  */
 router.post("/set-username", verifyToken, async (req, res) => {
   try {
-    const uid = req.uid; // Retrieved from the verifyToken middleware (cookie or header)
+    const uid = req.uid; // Retrieved from the verifyToken middleware
     const { username } = req.body;
     
     if (!username) return res.status(400).json({ error: "Missing username" });
@@ -94,10 +90,8 @@ router.post("/set-username", verifyToken, async (req, res) => {
       return res.status(400).json({ error: "Username already taken" });
     }
 
-    // Save user’s username
+    // Save user’s username and reverse lookup
     await db.ref(`users/${uid}/username`).set(username);
-
-    // Save reverse lookup
     await db.ref(`usernames/${username}`).set(uid);
 
     res.json({ success: true, username });
@@ -106,7 +100,6 @@ router.post("/set-username", verifyToken, async (req, res) => {
     res.status(500).json({ error: "Failed to set username" });
   }
 });
-
 
 
 /**
@@ -126,7 +119,6 @@ router.post("/signout", async (req, res) => {
             // Revoke all refresh tokens for the user identified by 'sub' (uid)
             await admin.auth().revokeRefreshTokens(decodedClaims.sub); 
         } catch (error) {
-            // Log a warning but don't fail the signout if the session is already invalid
             console.warn("Could not revoke Firebase session tokens (already expired/invalid):", error.message);
         }
     }

@@ -3,6 +3,8 @@ import Sidebar from "../components/Sidebar";
 import { auth } from "../firebase";
 import { useParams } from "react-router-dom";
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+
 export default function HabitStats({ user }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [stats, setStats] = useState({});
@@ -10,10 +12,10 @@ export default function HabitStats({ user }) {
 
   const loadStats = async () => {
     const token = await auth.currentUser.getIdToken();
-    const res = await fetch(
-      `http://localhost:5000/api/habits/stats/${id}/${range}`,
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+    const res = await fetch(`${BACKEND_URL}/api/habits/stats/${id}/${range}`, {
+      headers: { Authorization: `Bearer ${token}` },
+      credentials: "include",
+    });
     setStats(await res.json());
   };
 

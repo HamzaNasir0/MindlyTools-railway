@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import cookieParser from "cookie-parser"; 
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
@@ -11,12 +11,13 @@ const app = express();
 
 app.use(
   cors({
+    // CRITICAL: Uses environment variable for dynamic origin
     origin: process.env.CLIENT_URL || "http://localhost:5173", 
-    credentials: true, // 
+    credentials: true, // REQUIRED to allow cookies to be sent/received
   })
 );
 app.use(express.json());
-app.use(cookieParser()); //
+app.use(cookieParser()); MIDDLEWARE
 
 app.get("/", (req, res) => {
   res.send("MindlyTools API is running...");
