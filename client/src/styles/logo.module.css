@@ -1,0 +1,113 @@
+.logoContainer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 0.5rem 0.75rem;
+  width: 100%;
+  overflow: hidden;
+}
+
+.mainLogo {
+  font-weight: 900;
+  font-size: clamp(3rem, 4vw, 2.25rem);
+  display: flex;
+  align-items: center;
+  letter-spacing: -1px;
+  position: relative;
+  z-index: 3;
+  margin: 0;
+  line-height: 1;
+  letter-spacing: -3.5px;
+  color: #0C2B4E;
+  text-shadow: 0 0 10px #97b5d84d, 0 0 20px #a6d8ed33;
+}
+
+.mainLogo span {
+  display: inline-block;
+  position: relative;
+}
+
+.charM { 
+  animation: glitchEffect 8s ease-in-out 0.1s infinite;
+  color: #0C2B4E;
+}
+.charI { 
+  animation: glitchEffect 8s ease-in-out 0.2s infinite;
+  color: #123760;
+}
+.charN { 
+  animation: glitchEffect 8s ease-in-out 0.3s infinite;
+  color: #1A3D64;
+}
+.charD { 
+  animation: glitchEffect 8s ease-in-out 0.4s infinite;
+  color: #1A3D64;
+}
+.charL { 
+  animation: glitchEffect 8s ease-in-out 0.5s infinite;
+  color: #1D546C;
+}
+.charY { 
+  animation: glitchEffect 8s ease-in-out 0.6s infinite;
+  color: #1D546C;
+}
+.charT { 
+  animation: glitchEffect 8s ease-in-out 0.7s infinite;
+  color: #1D546C;
+}
+.charO { 
+  animation: glitchEffect 8s ease-in-out 0.8s infinite;
+  color: #1A3D64;
+}
+.charO2 { 
+  animation: glitchEffect 8s ease-in-out 0.9s infinite;
+  color: #1A3D64;
+}
+.charL2 { 
+  animation: glitchEffect 8s ease-in-out 1.0s infinite;
+  color: #123760;
+}
+.charS { 
+  animation: glitchEffect 8s ease-in-out 1.1s infinite;
+  color: #0C2B4E;
+}
+
+/* Keyframe Animations */
+@keyframes glitchEffect {
+  0%, 85%, 100% {
+    transform: translate(0, 0) skew(0deg);
+    opacity: 1;
+    text-shadow: 
+      0 0 10px rgba(12, 43, 78, 0.3),
+      0 0 20px rgba(29, 84, 108, 0.2);
+  }
+  86%, 88%, 90% {
+    transform: translate(-1px, 0.5px) skew(1deg);
+    opacity: 0.8;
+    text-shadow: 
+      0 0 8px rgba(26, 61, 100, 0.4),
+      0 0 15px rgba(29, 84, 108, 0.3);
+  }
+  87%, 89%, 91% {
+    transform: translate(1px, -0.5px) skew(-1deg);
+    opacity: 0.9;
+    text-shadow: 
+      0 0 8px rgba(29, 84, 108, 0.4),
+      0 0 15px rgba(26, 61, 100, 0.3);
+  }
+  92%, 94% {
+    transform: translate(-0.5px, -0.5px) skew(0.5deg);
+    opacity: 0.85;
+    text-shadow: 
+      0 0 6px rgba(26, 61, 100, 0.4),
+      0 0 12px rgba(12, 43, 78, 0.3);
+  }
+}
+
+/* Responsive Style */
+@media (max-width: 768px) {
+  .mainLogo {
+    font-size: 2.5rem;
+  }
+}

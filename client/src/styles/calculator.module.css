@@ -1,0 +1,131 @@
+.calc-container {
+  width: 340px;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.calc-display {
+  height: 80px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border-radius: 5px;
+  margin-bottom: 20px;
+  font-size: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 20px;
+  overflow-x: auto;
+}
+
+.calc-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.button {
+  padding: 18px;
+  border: none;
+  border-radius: 14px;
+  font-size: 18px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: 0.25s ease;
+}
+
+.button:hover {
+  background: rgb(255 255 255 / 41%);
+  transform: translateY(-3px);
+}
+
+.button:active {
+  transform: scale(0.95);
+}
+
+.calc-back-btn {
+  position: absolute;
+  top: 120px;
+  left: 12px;
+}
+
+.equal {
+  background: linear-gradient(135deg, #00c6ff, #0072ff);
+  color: white;
+  font-weight: bold;
+}
+
+.C-button {
+  background: rgba(255, 72, 72, 0.7);
+}
+
+.zero {
+  grid-column: span 2;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .calc-display {
+    height: 70px;
+    font-size: 28px;
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+
+  .calc-buttons {
+    gap: 10px;
+  }
+
+  .button {
+    padding: 16px;
+    font-size: 16px;
+    border-radius: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .calc-container {
+    width: 100%;
+  }
+  .calc-display {
+    height: 60px;
+    font-size: 24px;
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  .calc-buttons {
+    gap: 8px;
+  }
+
+  .button {
+    padding: 14px;
+    font-size: 15px;
+    border-radius: 10px;
+  }
+}
+
+@media (max-width: 380px) {
+  .calc-display {
+    height: 55px;
+    font-size: 22px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+
+  .calc-buttons {
+    gap: 6px;
+  }
+
+  .button {
+    padding: 12px;
+    font-size: 14px;
+    border-radius: 8px;
+  }
+}

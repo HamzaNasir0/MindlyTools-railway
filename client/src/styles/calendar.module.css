@@ -1,0 +1,17 @@
+.calendar {
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  width: fit-content;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.wrapper :global(.react-calendar) {
+  font-size: 20px;
+  border-radius: 10px;
+}
+
+.wrapper :global(.react-calendar__navigation button) {
+  font-size: 20px;
+}

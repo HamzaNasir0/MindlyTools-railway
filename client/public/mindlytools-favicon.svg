@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <!-- white background -->
+  <rect width="64" height="64" fill="#FFFFFF"/>
+
+  <!-- navy blue 'M' in clean sans-serif -->
+  <text x="50%" y="50%" font-family="Arial, Helvetica, sans-serif"
+        font-size="44" fill="#001F54" text-anchor="middle"
+        dominant-baseline="central">M</text>
+</svg>
